@@ -31,12 +31,17 @@ h1{
   font-size: 2rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
+  width: 100%;
+  text-align: left;
 }
 .flex{
   display: flex;
 }
 .flex.column{
   flex-direction: column;
+}
+.align-center{
+  align-items: center;
 }
 .justify-center{
   justify-content: center;
@@ -57,13 +62,12 @@ h1{
 }
 
 
-
+#root{
+  padding-top: 4rem;
+}
 .card{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 3rem 5rem;
+  position: relative;
+  padding: 4rem 5rem;
   background-color: #fff;
   border-radius: 3rem;
 }
@@ -100,6 +104,7 @@ h1{
 }
 #puzzle-container .cell.active{
   background-color: var(--pink-accent);
+  border-color: #000;
   color: #fff;
 }
 #puzzle-container .cell.border-left{
@@ -153,14 +158,16 @@ h1{
 
 
 #num-buttons{
-  margin: 1.5rem 0 .5rem;
+  margin: 1.5rem 0 1rem;
 }
 #num-buttons button{
-  background-color: orange;
-  width: 3rem;
-  height: 3rem;
+  border: 1px #000 solid;
+  width: 3.5rem;
+  height: 3.5rem;
   margin: 0 .15rem;
   border-radius: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 
@@ -168,9 +175,14 @@ h1{
 .controls .action{
   width: 3.5rem;
   height: 3.5rem;
-  margin-right: .5rem;
+  margin: 0 .15rem;
   border-radius: 50%;
-  border: 1px #aaa solid;
+  border: 1px #000 solid;
+  background-color: #fff;
+  transition: filter .3s;
+}
+.controls .action:hover{
+  filter: invert(1);
 }
 .controls .action::before,
 .controls .action::after{
@@ -202,6 +214,9 @@ h1{
   background-image: url(style/media/actions/pencil.svg);
 }
 
+/* HIGHLIGHTING FOR ACTIVE STATE WILL GO HERE */
+.controls .action[data-instate="true"]{
+}
 
 
 

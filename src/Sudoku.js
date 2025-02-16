@@ -183,7 +183,7 @@ export default function Sudoku() {
 
   return (
     <>
-      <div className="card flex column">
+      <div className="card flex column align-center">
         <h1>Graeme's Sudoku</h1>
         <button id="reset-game-button" onClick={() => handleResetGame()}>RESET GAME</button>
         <div id="puzzle-container">
@@ -203,8 +203,8 @@ export default function Sudoku() {
         <div className="controls flex justify-center">
           <button className="action pseudo undo" onClick={() => handleUndo()}></button>
           <button className="action pseudo eraser" onClick={() => handleErase()}></button>
-          <button className="action pseudo edit" onClick={() => handleInEdit()}></button>
-          <button className="action pseudo pencilMarks" onClick={() => handlePencilMarks()}></button>
+          <button className="action pseudo edit" data-instate={inEdit} onClick={() => handleInEdit()}></button>
+          <button className="action pseudo pencilMarks" data-instate={pencilMarks} onClick={() => handlePencilMarks()}></button>
         </div>
         <div>{gameMessage}</div>
       </div>
