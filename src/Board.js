@@ -2,8 +2,8 @@ import { PencilMark } from "./PencilMark";
 
 export function Board({gameState, selection, onCellClick}) {
 
-    let highlightValue = selection.length != 0 && "value" in gameState[selection[0]][selection[1]] ?
-                            gameState[selection[0]][selection[1]].value :
+    let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ?
+                            gameState[selection.row][selection.col].value :
                             0;
 
     let board = [];
@@ -38,7 +38,7 @@ export function Board({gameState, selection, onCellClick}) {
                     classes += " active";
                 }
             } else {
-                if (selection[0] === i && selection[1] === j) {
+                if (selection.row === i && selection.col === j) {
                     classes += " active";
                 }                
             }
