@@ -10,11 +10,14 @@ export default function Sudoku() {
   [{ "value": 6, "immutable": true }, { "value": 5, "immutable": true }, {}, {}, {}, {}, { "value": 7, "immutable": true }, {}, {}],
   [{}, { "value": 9, "immutable": true }, { "value": 7, "immutable": true }, { "value": 6, "immutable": true }, {}, {}, {}, {}, {}],
   [{ "value": 5, "immutable": true }, { "value": 4, "immutable": true }, {}, { "value": 2, "immutable": true }, {}, {}, {}, {}, { "value": 1, "immutable": true }],
-  [{ "pencil": [1, 2, 5, 9] }, {}, { "pencil": [2, 3] }, {}, { "value": 7, "immutable": true }, {}, { "value": 9, "immutable": true }, { "value": 5, "immutable": true }, { "pencil": [2] }]];
+  [{}, {}, {}, {}, { "value": 7, "immutable": true }, {}, { "value": 9, "immutable": true }, { "value": 5, "immutable": true }, {}]];
 
   // const [gameState, setGameState] = useState(Array(9).fill(Array(9).fill(null)));
   const [gameState, setGameState] = useState(sampleGame);
   const [selection, setSelection] = useState({});
+  const [pencilMarks, setPencilMarks] = useState(false);
+  const [inEdit, setInEdit] = useState(false);
+  const [gameMessage, setGameMessage] = useState("");
 
   function handleClick(i, j) {
     setSelection({ row: i, col: j });
@@ -23,12 +26,77 @@ export default function Sudoku() {
   function handleNumber(number) {
     if ("row" in selection && "col" in selection) {
 
-      let cell = gameState[selection.row][selection.col];
-      if ("value" in cell && cell.immutable) {
+      if (inEdit) {
+        processEdit(number);
+      } else {
+        processNormalGame(number);
+      }
+    }
+  }
+
+  function processEdit(number) {
+    let newGameState = gameState.map(row => row.slice());
+    newGameState[selection.row][selection.col] = {value: number, immutable: true};
+    setGameState(newGameState);
+  }
+
+  function processNormalGame(number) {
+
+    let newGameState = gameState.map(row => row.slice());
+    let cell = gameState[selection.row][selection.col];
+
+    if (pencilMarks) {
+      if ("value" in cell) {
         return;
       }
+      
+      let marks = [];
+      if ("pencil" in cell) {
+        marks = [...cell.pencil];
+      }
+      marks.push(number);
+      let uniqueMarks = [...new Set(marks)].sort();
+      newGameState[selection.row][selection.col] = {pencil: uniqueMarks};
+    } else {
+
+      if ("value" in cell && cell.immutable) {
+          return;
+      }
+      newGameState[selection.row][selection.col] = {value: number, immutable: false};
+    }
+    setGameState(newGameState);
+  }
+
+  function handlePencilMarks() {
+    if (!inEdit) {
+      if (!pencilMarks) {
+        setGameMessage("Pencil marking selected.");
+      } else {
+        setGameMessage("");
+      }  
+      setPencilMarks(!pencilMarks);
+    }
+  }
+
+  function handleInEdit() {
+    if (!inEdit) {
+      setGameMessage("In editor mode.")
+    } else {
+      setGameMessage("");
+    }
+    setInEdit(!inEdit);   // Toggle it
+  }
+
+  function handleErase() {
+    if ("row" in selection && "col" in selection) {
+      let cell = gameState[selection.row][selection.col];
+      
+      if (!inEdit && "value" in cell && cell.immutable) {
+        return;
+      }
+
       let newGameState = gameState.map(row => row.slice());
-      newGameState[selection.row][selection.col].value = number;
+      newGameState[selection.row][selection.col] = {};
       setGameState(newGameState);
     }
   }
@@ -54,12 +122,13 @@ export default function Sudoku() {
         </div>
         <div className="controls flex justify-center">
           <button className="action pseudo undo"></button>
-          <button className="action pseudo eraser"></button>
+          <button className="action pseudo eraser" onClick={() => handleErase()}></button>
           <button className="action pseudo hint"></button>
-          <button className="action pseudo edit"></button>
+          <button className="action pseudo edit" onClick={() => handleInEdit()}></button>
           <button className="action pseudo ext-hilight"></button>
-          <button className="action pseudo"></button>
+          <button className="action pseudo pencilMarks" onClick={() => handlePencilMarks()}></button>
         </div>
+        <div>{gameMessage}</div>
       </div>
     </>
   );
