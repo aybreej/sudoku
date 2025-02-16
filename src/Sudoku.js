@@ -13,31 +13,18 @@ export default function Sudoku() {
   [{}, {}, {}, {}, { "value": 7, "immutable": true }, {}, { "value": 9, "immutable": true }, { "value": 5, "immutable": true }, {}]];
 
   // const [gameState, setGameState] = useState(Array(9).fill(Array(9).fill(null)));
+  const [history, setHistory] = useState([sampleGame]);
   const [gameState, setGameState] = useState(sampleGame);
   const [selection, setSelection] = useState({});
   const [pencilMarks, setPencilMarks] = useState(false);
   const [inEdit, setInEdit] = useState(false);
   const [gameMessage, setGameMessage] = useState("");
 
-  function handleClick(i, j) {
-    setSelection({ row: i, col: j });
-  }
-
-  function handleNumber(number) {
-    if ("row" in selection && "col" in selection) {
-
-      if (inEdit) {
-        processEdit(number);
-      } else {
-        processNormalGame(number);
-      }
-    }
-  }
-
   function processEdit(number) {
     let newGameState = gameState.map(row => row.slice());
     newGameState[selection.row][selection.col] = {value: number, immutable: true};
     setGameState(newGameState);
+    addToHistory(newGameState);
   }
 
   function processNormalGame(number) {
@@ -73,6 +60,53 @@ export default function Sudoku() {
       newGameState[selection.row][selection.col] = {value: number, immutable: false};
     }
     setGameState(newGameState);
+    addToHistory(newGameState);
+  }
+
+  function addToHistory(newGameState) {
+    // return;
+    let newHistory =   history.map(state => state.map(row => row.slice()));
+    let copyOfNewGameState = newGameState.map(row => row.slice());
+    newHistory.push(copyOfNewGameState);
+    setHistory(newHistory);
+  }
+
+  function gameComplete() {
+
+    for (let row of gameState) {
+      for (let cell of row) {
+        if (!("value" in cell)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  // ***************************************************************************************
+  //    Start of handlers
+  // ***************************************************************************************
+  function handleClick(i, j) {
+    if (gameComplete()) {
+      return;
+    }
+
+    setSelection({ row: i, col: j });
+  }
+
+  function handleNumber(number) {
+    if (gameComplete()) {
+      return;
+    }
+
+    if ("row" in selection && "col" in selection) {
+
+      if (inEdit) {
+        processEdit(number);
+      } else {
+        processNormalGame(number);
+      }
+    }
   }
 
   function handlePencilMarks() {
@@ -93,9 +127,17 @@ export default function Sudoku() {
       setGameMessage("");
     }
     setInEdit(!inEdit);   // Toggle it
+
+    if (pencilMarks) {
+      setPencilMarks(!pencilMarks);
+    }
   }
 
   function handleErase() {
+    if (gameComplete()) {
+      return;
+    }
+
     if ("row" in selection && "col" in selection) {
       let cell = gameState[selection.row][selection.col];
       
@@ -106,6 +148,7 @@ export default function Sudoku() {
       let newGameState = gameState.map(row => row.slice());
       newGameState[selection.row][selection.col] = {};
       setGameState(newGameState);
+      addToHistory(newGameState);
     }
   }
 
@@ -124,6 +167,18 @@ export default function Sudoku() {
       resetState.push(newRow);
     });
     setGameState(resetState);
+    setHistory([resetState]);
+  }
+
+  function handleUndo() {
+    if (history.length > 1) {
+      let newHistory =   history.map(state => state.map(row => row.slice()));
+      newHistory.pop();
+      setHistory(newHistory);
+
+      let undoGameState = newHistory[newHistory.length-1].map(row => row.slice());
+      setGameState(undoGameState);    
+    }
   }
 
   return (
@@ -146,11 +201,9 @@ export default function Sudoku() {
           <button onClick={() => handleNumber(9)}>9</button>
         </div>
         <div className="controls flex justify-center">
-          <button className="action pseudo undo"></button>
+          <button className="action pseudo undo" onClick={() => handleUndo()}></button>
           <button className="action pseudo eraser" onClick={() => handleErase()}></button>
-          <button className="action pseudo hint"></button>
           <button className="action pseudo edit" onClick={() => handleInEdit()}></button>
-          <button className="action pseudo"></button>
           <button className="action pseudo pencilMarks" onClick={() => handlePencilMarks()}></button>
         </div>
         <div>{gameMessage}</div>
