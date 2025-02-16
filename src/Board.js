@@ -32,6 +32,14 @@ export function Board({gameState, selection, onCellClick}) {
                 classes += " border-left"
             }
 
+            if (selection.row === i) {
+                classes += " cross";
+            }
+
+            if (selection.col === j) {
+                classes += " cross";
+            }
+            
             if ('value' in cell) {
                 value = cell.value;
                 if (value === highlightValue) {

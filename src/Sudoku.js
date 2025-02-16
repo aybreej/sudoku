@@ -54,9 +54,17 @@ export default function Sudoku() {
       if ("pencil" in cell) {
         marks = [...cell.pencil];
       }
-      marks.push(number);
-      let uniqueMarks = [...new Set(marks)].sort();
+
+      const index = marks.indexOf(number);
+      if (index > -1) {
+        marks.splice(index, 1);
+      } else {
+        marks.push(number);
+      }
+      
+      const uniqueMarks = [...new Set(marks)].sort();
       newGameState[selection.row][selection.col] = {pencil: uniqueMarks};
+
     } else {
 
       if ("value" in cell && cell.immutable) {
@@ -101,11 +109,28 @@ export default function Sudoku() {
     }
   }
 
+  function handleResetGame() {
+
+    let resetState = [];
+    gameState.forEach((row, i) => {
+      let newRow = [];
+      row.forEach((cell, j) => {
+        if ("value" in cell && cell.immutable) {
+          newRow.push(cell);
+        } else {
+          newRow.push ({});
+        }
+      });
+      resetState.push(newRow);
+    });
+    setGameState(resetState);
+  }
+
   return (
     <>
       <div className="card flex column">
         <h1>Graeme's Sudoku</h1>
-        <button id="reset-game-button">RESET GAME</button>
+        <button id="reset-game-button" onClick={() => handleResetGame()}>RESET GAME</button>
         <div id="puzzle-container">
           <Board gameState={gameState} selection={selection} onCellClick={handleClick} />
         </div>
@@ -125,7 +150,7 @@ export default function Sudoku() {
           <button className="action pseudo eraser" onClick={() => handleErase()}></button>
           <button className="action pseudo hint"></button>
           <button className="action pseudo edit" onClick={() => handleInEdit()}></button>
-          <button className="action pseudo ext-hilight"></button>
+          <button className="action pseudo"></button>
           <button className="action pseudo pencilMarks" onClick={() => handlePencilMarks()}></button>
         </div>
         <div>{gameMessage}</div>
