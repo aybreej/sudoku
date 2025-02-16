@@ -93,7 +93,7 @@ h1{
   transition: color .3s, background-color .3s;
 }
 #puzzle-container .cell.initial{
-  color: #666;
+  color: #888;
 }
 #puzzle-container .cell.cross{
   background-color: var(--pink-mid);
@@ -193,6 +193,15 @@ h1{
 .controls .action.hint::after{
   background-image: url(style/media/actions/hint.svg);
 }
+.controls .action.edit::before,
+.controls .action.edit::after{
+  background-image: url(style/media/actions/edit.svg);
+}
+.controls .action.pencilMarks::before,
+.controls .action.pencilMarks::after{
+  background-image: url(style/media/actions/pencil.svg);
+}
+
 
 
 
