@@ -7,6 +7,7 @@
 
   --pink-accent: #FF5AA4;
   --pink-mid: #ffd1e5;
+  --pink-mid-border: #cda3b4;
   --pink-light: #fff0f7;
 }
 html{
@@ -104,10 +105,11 @@ h1{
 }
 #puzzle-container .cell.cross{
   background-color: var(--pink-mid);
+  border-color: var(--pink-mid-border);
 }
 #puzzle-container .cell.active{
   background-color: var(--pink-accent);
-  border-color: #000;
+  border-color: var(--pink-accent);
   color: #fff;
 }
 #puzzle-container .cell.border-left{
@@ -171,8 +173,13 @@ h1{
   border-radius: 1rem;
   font-size: 1.5rem;
   font-weight: 600;
+  transition: background-color .3s, border-color .3s, color .3s;
 }
-
+#num-buttons button:hover{
+  background-color: var(--pink-accent);
+  border-color: var(--pink-accent);
+  color: #fff;
+}
 
 
 .controls .action{
@@ -182,10 +189,10 @@ h1{
   border-radius: 50%;
   border: 1px #000 solid;
   background-color: #fff;
-  transition: filter .3s;
+  transition: background-color .3s;
 }
 .controls .action:hover{
-  filter: invert(1);
+  background-color: #000;
 }
 .controls .action::before,
 .controls .action::after{
@@ -216,9 +223,26 @@ h1{
 .controls .action.pencilMarks::after{
   background-image: url(style/media/actions/pencil.svg);
 }
+.controls .action::after{
+  filter: invert(1);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.controls .action:hover::after{
+  opacity: 1;
+}
 
 /* HIGHLIGHTING FOR ACTIVE STATE WILL GO HERE */
 .controls .action[data-instate="true"]{
+  filter: invert(0);
+  background-color: var(--pink-accent);
+  border-color: var(--pink-accent);
+}
+.controls .action[data-instate="true"]::before{
+  opacity: 0;
+}
+.controls .action[data-instate="true"]::after{
+  opacity: 1;
 }
 
 
