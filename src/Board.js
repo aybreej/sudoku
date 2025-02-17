@@ -12,7 +12,7 @@ export function Board({gameState, selection, onCellClick}) {
             let classes = "cell";
             let value = null;
 
-            if (cell !== 0) {
+            if (cell["immutable"]) {
                 classes += " initial"
             }
             // add border-bottom to every 3rd row except row 9

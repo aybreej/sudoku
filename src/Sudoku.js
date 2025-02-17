@@ -19,10 +19,11 @@ export default function Sudoku() {
   const [pencilMarks, setPencilMarks] = useState(false);
   const [inEdit, setInEdit] = useState(false);
   const [gameMessage, setGameMessage] = useState("");
+  const [showResetPopup, setShowResetPopup] = useState(false);
 
   function processEdit(number) {
     let newGameState = gameState.map(row => row.slice());
-    newGameState[selection.row][selection.col] = {value: number, immutable: true};
+    newGameState[selection.row][selection.col] = { value: number, immutable: true };
     setGameState(newGameState);
     addToHistory(newGameState);
   }
@@ -36,7 +37,7 @@ export default function Sudoku() {
       if ("value" in cell) {
         return;
       }
-      
+
       let marks = [];
       if ("pencil" in cell) {
         marks = [...cell.pencil];
@@ -48,16 +49,16 @@ export default function Sudoku() {
       } else {
         marks.push(number);
       }
-      
+
       const uniqueMarks = [...new Set(marks)].sort();
-      newGameState[selection.row][selection.col] = {pencil: uniqueMarks};
+      newGameState[selection.row][selection.col] = { pencil: uniqueMarks };
 
     } else {
 
       if ("value" in cell && cell.immutable) {
-          return;
+        return;
       }
-      newGameState[selection.row][selection.col] = {value: number, immutable: false};
+      newGameState[selection.row][selection.col] = { value: number, immutable: false };
     }
     setGameState(newGameState);
     addToHistory(newGameState);
@@ -65,7 +66,7 @@ export default function Sudoku() {
 
   function addToHistory(newGameState) {
     // return;
-    let newHistory =   history.map(state => state.map(row => row.slice()));
+    let newHistory = history.map(state => state.map(row => row.slice()));
     let copyOfNewGameState = newGameState.map(row => row.slice());
     newHistory.push(copyOfNewGameState);
     setHistory(newHistory);
@@ -115,7 +116,7 @@ export default function Sudoku() {
         setGameMessage("Pencil marking selected.");
       } else {
         setGameMessage("");
-      }  
+      }
       setPencilMarks(!pencilMarks);
     }
   }
@@ -140,7 +141,7 @@ export default function Sudoku() {
 
     if ("row" in selection && "col" in selection) {
       let cell = gameState[selection.row][selection.col];
-      
+
       if (!inEdit && "value" in cell && cell.immutable) {
         return;
       }
@@ -153,7 +154,6 @@ export default function Sudoku() {
   }
 
   function handleResetGame() {
-
     let resetState = [];
     gameState.forEach((row, i) => {
       let newRow = [];
@@ -161,7 +161,7 @@ export default function Sudoku() {
         if ("value" in cell && cell.immutable) {
           newRow.push(cell);
         } else {
-          newRow.push ({});
+          newRow.push({});
         }
       });
       resetState.push(newRow);
@@ -172,20 +172,20 @@ export default function Sudoku() {
 
   function handleUndo() {
     if (history.length > 1) {
-      let newHistory =   history.map(state => state.map(row => row.slice()));
+      let newHistory = history.map(state => state.map(row => row.slice()));
       newHistory.pop();
       setHistory(newHistory);
 
-      let undoGameState = newHistory[newHistory.length-1].map(row => row.slice());
-      setGameState(undoGameState);    
+      let undoGameState = newHistory[newHistory.length - 1].map(row => row.slice());
+      setGameState(undoGameState);
     }
   }
 
   return (
     <>
-      <div className="card flex column">
+      <div className="card flex column align-center">
         <h1>Graeme's Sudoku</h1>
-        <button id="reset-game-button" onClick={() => handleResetGame()}>RESET GAME</button>
+        <button id="reset-game-button" onClick={() => { setShowResetPopup(true) }}>Reset game</button>
         <div id="puzzle-container">
           <Board gameState={gameState} selection={selection} onCellClick={handleClick} />
         </div>
@@ -203,11 +203,23 @@ export default function Sudoku() {
         <div className="controls flex justify-center">
           <button className="action pseudo undo" onClick={() => handleUndo()}></button>
           <button className="action pseudo eraser" onClick={() => handleErase()}></button>
-          <button className="action pseudo edit" onClick={() => handleInEdit()}></button>
-          <button className="action pseudo pencilMarks" onClick={() => handlePencilMarks()}></button>
+          <button className="action pseudo edit" data-instate={inEdit} onClick={() => handleInEdit()}></button>
+          <button className="action pseudo pencilMarks" data-instate={pencilMarks} onClick={() => handlePencilMarks()}></button>
         </div>
-        <div>{gameMessage}</div>
+        <div className="game-message">{gameMessage}</div>
       </div>
+      {showResetPopup && (
+        <div id="reset-game-popup" className="popup flex column align-center justify-center">
+          <div className="card flex column">
+            <h4>Confirm?</h4>
+            <p>Are you sure you want to reset the game?</p>
+            <div className="flex space-between">
+            <button className="confirm-btn split-two margin-right yes" onClick={() => { handleResetGame(); setShowResetPopup(false) }}>Yes</button>
+            <button className="confirm-btn split-two" onClick={() => { setShowResetPopup(false) }}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

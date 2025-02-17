@@ -7,6 +7,7 @@
 
   --pink-accent: #FF5AA4;
   --pink-mid: #ffd1e5;
+  --pink-mid-border: #cda3b4;
   --pink-light: #fff0f7;
 }
 html{
@@ -31,6 +32,8 @@ h1{
   font-size: 2rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
+  width: 100%;
+  text-align: left;
 }
 .flex{
   display: flex;
@@ -38,13 +41,26 @@ h1{
 .flex.column{
   flex-direction: column;
 }
+.align-center{
+  align-items: center;
+}
 .justify-center{
   justify-content: center;
 }
 .justify-end{
   justify-content: flex-end;
 }
+.space-between{
+  justify-content: space-between;
+}
 
+
+.split-two{
+  width: 50%;
+}
+.margin-right{
+  margin-right: .5rem;
+}
 
 .pseudo{
   position: relative;
@@ -57,13 +73,12 @@ h1{
 }
 
 
-
+#root{
+  padding-top: 4rem;
+}
 .card{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 3rem 5rem;
+  position: relative;
+  padding: 4rem 5rem;
   background-color: #fff;
   border-radius: 3rem;
 }
@@ -71,6 +86,7 @@ h1{
   display: grid;
   border-radius: 1.5rem;
   overflow: hidden;
+  border: 3px #000 solid;
   grid-template-columns: repeat(9, 1fr);
 }
 #puzzle-container .cell{
@@ -78,7 +94,7 @@ h1{
   cursor: pointer;
 
   font-family: var(--font-mono);
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 500;
 
   display: flex;
@@ -87,31 +103,33 @@ h1{
   width: 3.6rem;
   height: 3.6rem;
   box-sizing: border-box;
-  border: 1px solid #fff;
-  background-color: var(--pink-light);
+  border: .5px solid #bbb;
+  background-color: #fff;
   transition: color .3s, background-color .3s;
 }
 #puzzle-container .cell.initial{
-  color: rgba(0,0,0, .6)
+  color: #888;
 }
 #puzzle-container .cell.cross{
   background-color: var(--pink-mid);
+  border-color: var(--pink-mid-border);
 }
 #puzzle-container .cell.active{
   background-color: var(--pink-accent);
+  border-color: var(--pink-accent);
   color: #fff;
 }
 #puzzle-container .cell.border-left{
-  border-left: 3px solid #fff;
+  border-left: 1px solid #000;
 }
 #puzzle-container .cell.border-right{
-  border-right: 3px solid #fff;
+  border-right: 1px solid #000;
 }
 #puzzle-container .cell.border-bottom{
-  border-bottom: 3px solid #fff;
+  border-bottom: 1px solid #000;
 }
 #puzzle-container .cell.border-top{
-  border-top: 3px solid #fff;
+  border-top: 1px solid #000;
 }
 
 
@@ -152,24 +170,36 @@ h1{
 
 
 #num-buttons{
-  margin: 1.5rem 0 .5rem;
+  margin: 1.5rem 0 1rem;
 }
 #num-buttons button{
-  background-color: orange;
-  width: 3rem;
-  height: 3rem;
+  border: 1px #000 solid;
+  width: 3.5rem;
+  height: 3.5rem;
   margin: 0 .15rem;
   border-radius: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: background-color .3s, border-color .3s, color .3s;
 }
-
+#num-buttons button:hover{
+  background-color: var(--pink-accent);
+  border-color: var(--pink-accent);
+  color: #fff;
+}
 
 
 .controls .action{
   width: 3.5rem;
   height: 3.5rem;
-  margin-right: .5rem;
+  margin: 0 .15rem;
   border-radius: 50%;
-  border: 1px #aaa solid;
+  border: 1px #000 solid;
+  background-color: #fff;
+  transition: background-color .3s;
+}
+.controls .action:hover{
+  background-color: #000;
 }
 .controls .action::before,
 .controls .action::after{
@@ -192,13 +222,105 @@ h1{
 .controls .action.hint::after{
   background-image: url(style/media/actions/hint.svg);
 }
+.controls .action.edit::before,
+.controls .action.edit::after{
+  background-image: url(style/media/actions/edit.svg);
+}
+.controls .action.pencilMarks::before,
+.controls .action.pencilMarks::after{
+  background-image: url(style/media/actions/pencil.svg);
+}
+.controls .action::after{
+  filter: invert(1);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.controls .action:hover::after{
+  opacity: 1;
+}
+
+/* HIGHLIGHTING FOR ACTIVE STATE WILL GO HERE */
+.controls .action[data-instate="true"]{
+  filter: invert(0);
+  background-color: var(--pink-accent);
+  border-color: var(--pink-accent);
+}
+.controls .action[data-instate="true"]::before{
+  opacity: 0;
+}
+.controls .action[data-instate="true"]::after{
+  opacity: 1;
+}
 
 
 
 #reset-game-button{
   position: absolute;
-  top: 4rem;
-  padding: .5rem 1.2rem;
-  background-color: orange;
+  top: 3.5rem;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
   right: 5rem;
+  background-color: var(--pink-accent);
+  color: #fff;
+  font-weight: 600;
+  font-size: .8rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  border: 2px var(--pink-accent) solid;
+  transition: background-color .3s, color .3s;
+}
+#reset-game-button:hover{
+  background-color: transparent;
+  color: var(--pink-accent);
+}
+
+
+.popup{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .4);
+  top: 0;
+  left: 0;
+}
+.popup .card{
+  border-radius: 3rem;
+  padding: 3rem 3.5rem 3rem;
+}
+
+
+
+
+.game-message{
+  margin-top: .5rem;
+  font-weight: 500;
+  color: #888;
+  font-size: 1rem;
+}
+h4{
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.confirm-btn{
+  margin-top: 1.5rem;
+  padding: 1rem 3rem;
+  font-weight: 800;
+  border-radius: 1rem;
+  text-transform: uppercase;
+  font-size: .8rem;
+  color: #aaa;
+  border: 2px #aaa solid;
+  transition: background-color .3s, color .3s;
+}
+.confirm-btn:hover{
+  background-color: #aaa;
+  color: #fff;
+}
+.confirm-btn.yes{
+  border: 2px var(--pink-accent) solid;
+  color: var(--pink-accent);
+}
+.confirm-btn.yes:hover{
+  background-color: var(--pink-accent);
+  color: #fff;
 }
