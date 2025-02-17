@@ -206,7 +206,7 @@ export default function Sudoku() {
           <button className="action pseudo edit" data-instate={inEdit} onClick={() => handleInEdit()}></button>
           <button className="action pseudo pencilMarks" data-instate={pencilMarks} onClick={() => handlePencilMarks()}></button>
         </div>
-        <div>{gameMessage}</div>
+        <div className="game-message">{gameMessage}</div>
       </div>
       {showResetPopup && (
         <div id="reset-game-popup" className="popup flex column align-center justify-center">
@@ -214,8 +214,8 @@ export default function Sudoku() {
             <h4>Confirm?</h4>
             <p>Are you sure you want to reset the game?</p>
             <div className="flex space-between">
-            <button onClick={() => { handleResetGame(); setShowResetPopup(false) }}>Yes</button>
-            <button onClick={() => { setShowResetPopup(false) }}>No</button>
+            <button className="confirm-btn split-two margin-right yes" onClick={() => { handleResetGame(); setShowResetPopup(false) }}>Yes</button>
+            <button className="confirm-btn split-two" onClick={() => { setShowResetPopup(false) }}>No</button>
             </div>
           </div>
         </div>
